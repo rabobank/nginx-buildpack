@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -78,7 +77,7 @@ func (s *Supplier) Run() error {
 	s.Log.BeginStep("Supplying nginx")
 
 	if err := s.InstallVarify(); err != nil {
-		s.Log.Error("Failed to copy verify: %s", err.Error())
+		s.Log.Error("Failed to copy varify: %s", err.Error())
 		return err
 	}
 
@@ -140,6 +139,16 @@ func (s *Supplier) InstallVarify() error {
 	return libbuildpack.CopyFile(filepath.Join(s.Manifest.RootDir(), "bin", "varify"), filepath.Join(s.Stager.DepDir(), "bin", "varify"))
 }
 
+func (s *Supplier) InstallNginx2sfx() error {
+	if exists, err := libbuildpack.FileExists(filepath.Join(s.Stager.DepDir(), "bin", "nginx2sfx")); err != nil {
+		return err
+	} else if exists {
+		return nil
+	}
+
+	return libbuildpack.CopyFile(filepath.Join(s.Manifest.RootDir(), "bin", "nginx2sfx"), filepath.Join(s.Stager.DepDir(), "bin", "nginx2sfx"))
+}
+
 func (s *Supplier) Setup() error {
 	configPath := filepath.Join(s.Stager.BuildDir(), "buildpack.yml")
 	if exists, err := libbuildpack.FileExists(configPath); err != nil {
@@ -180,7 +189,7 @@ func (s *Supplier) ValidateNginxConf() error {
 }
 
 func (s *Supplier) CheckAccessLogging() error {
-	contents, err := ioutil.ReadFile(filepath.Join(s.Stager.BuildDir(), "nginx.conf"))
+	contents, err := os.ReadFile(filepath.Join(s.Stager.BuildDir(), "nginx.conf"))
 	if err != nil {
 		return err
 	}
@@ -238,14 +247,14 @@ func (s *Supplier) InstallOpenResty() error {
 }
 
 func (s *Supplier) validateNginxConfHasPort() error {
-	tmpDir, err := ioutil.TempDir("", "")
+	tmpDir, err := os.MkdirTemp("", "")
 	if err != nil {
 		return fmt.Errorf("failed to create temp dir: %w", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	if err := libbuildpack.CopyDirectory(s.Stager.BuildDir(), tmpDir); err != nil {
-		return fmt.Errorf("Error copying nginx.conf: %s", err.Error())
+		return fmt.Errorf("error copying nginx.conf: %s", err.Error())
 	}
 	nginxConfPath := filepath.Join(tmpDir, "nginx.conf")
 
@@ -257,7 +266,7 @@ func (s *Supplier) validateNginxConfHasPort() error {
 		return fmt.Errorf("varify command failed: %w\noutput: %s", err, string(output))
 	}
 
-	confContents, err := ioutil.ReadFile(nginxConfPath)
+	confContents, err := os.ReadFile(nginxConfPath)
 	if err != nil {
 		return fmt.Errorf("error reading temp config file: %w", err)
 	}
@@ -270,7 +279,7 @@ func (s *Supplier) validateNginxConfHasPort() error {
 		if !filepath.IsAbs(confFile) {
 			confFile = filepath.Join(tmpDir, confFile)
 		}
-		contents, err := ioutil.ReadFile(confFile)
+		contents, err := os.ReadFile(confFile)
 		if err != nil {
 			return fmt.Errorf("error reading temp config file %s: %w", confFile, err)
 		}
@@ -302,14 +311,14 @@ func randomString(strLength int) string {
 }
 
 func (s *Supplier) validateNGINXConfSyntax() error {
-	tmpConfDir, err := ioutil.TempDir("/tmp", "conf")
+	tmpConfDir, err := os.MkdirTemp("/tmp", "conf")
 	if err != nil {
 		return fmt.Errorf("Error creating temp nginx conf dir: %s", err.Error())
 	}
-	defer os.RemoveAll(tmpConfDir)
+	defer func() { _ = os.RemoveAll(tmpConfDir) }()
 
 	if err := libbuildpack.CopyDirectory(s.Stager.BuildDir(), tmpConfDir); err != nil {
-		return fmt.Errorf("Error copying nginx.conf: %s", err.Error())
+		return fmt.Errorf("error copying nginx.conf: %s", err.Error())
 	}
 
 	nginxConfPath := filepath.Join(tmpConfDir, "nginx.conf")
@@ -318,8 +327,8 @@ func (s *Supplier) validateNGINXConfSyntax() error {
 	buildpackYMLPath := filepath.Join(s.Stager.BuildDir(), "buildpack.yml")
 	cmd := exec.Command(filepath.Join(s.Stager.DepDir(), "bin", "varify"), "-buildpack-yml-path", buildpackYMLPath, nginxConfPath, localModulePath, globalModulePath)
 	cmd.Dir = tmpConfDir
-	cmd.Stdout = ioutil.Discard
-	cmd.Stderr = ioutil.Discard
+	cmd.Stdout = io.Discard
+	cmd.Stderr = io.Discard
 	cmd.Env = append(os.Environ(), "PORT=8080")
 	if err := s.Command.Run(cmd); err != nil {
 		return err
@@ -387,7 +396,7 @@ func (s *Supplier) isStableLine(version string) bool {
 
 func GetIncludedConfs(str string) []string {
 	includeFiles := []string{}
-	includeRe := regexp.MustCompile(`include\s+([-.\w\/]+\.conf);`)
+	includeRe := regexp.MustCompile(`include\s+([-.\w/]+\.conf);`)
 
 	matches := includeRe.FindAllStringSubmatch(str, -1)
 	for _, v := range matches {
