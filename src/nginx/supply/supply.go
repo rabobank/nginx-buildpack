@@ -149,7 +149,8 @@ func (s *Supplier) InstallNginx2sfx() error {
 	if err := s.Installer.InstallOnlyVersion("nginx2sfx", nginxSbinDir); err != nil {
 		return err
 	}
-	return nil
+	dir := filepath.Join(s.Stager.DepDir(), "nginx2sfx")
+	return s.Stager.AddBinDependencyLink(filepath.Join(dir, "sbin", "nginx2sfx"), "nginx2sfx")
 }
 
 func (s *Supplier) Setup() error {
