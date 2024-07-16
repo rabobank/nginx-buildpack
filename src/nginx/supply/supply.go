@@ -81,6 +81,11 @@ func (s *Supplier) Run() error {
 		return err
 	}
 
+	if err := s.InstallNginx2sfx(); err != nil {
+		s.Log.Error("Failed to copy nginx2sfx: %s", err.Error())
+		return err
+	}
+
 	if err := s.Setup(); err != nil {
 		s.Log.Error("Could not setup: %s", err.Error())
 		return err
