@@ -1,7 +1,6 @@
 on:
   schedule:
-    - cron:  '30 18 * * 2,4'
-    # scheduled at 16:40 every Tuesday and Thursday
+    - cron:  '30 08 * * *'
   workflow_dispatch:
 
 jobs:
@@ -24,6 +23,7 @@ jobs:
           target_repo_token: ${{ secrets.GITHUB_TOKEN }}
           upstream_sync_branch: master
           upstream_sync_repo: cloudfoundry/nginx-buildpack
+          git_email: panzer@rabobank.nl
 
           # Set test_mode true to run tests instead of the true action!!
           test_mode: false
