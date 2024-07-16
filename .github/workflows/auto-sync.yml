@@ -23,6 +23,7 @@ jobs:
           target_repo_token: ${{ secrets.GITHUB_TOKEN }}
           upstream_sync_branch: master
           upstream_sync_repo: cloudfoundry/nginx-buildpack
+          git_fetch_args: --allow-unrelated-histories
           git_pull_args: --allow-unrelated-histories
           git_email: panzer@rabobank.nl
 
