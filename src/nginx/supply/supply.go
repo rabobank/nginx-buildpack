@@ -145,13 +145,11 @@ func (s *Supplier) InstallVarify() error {
 }
 
 func (s *Supplier) InstallNginx2sfx() error {
-	if exists, err := libbuildpack.FileExists(filepath.Join(s.Stager.DepDir(), "bin", "nginx2sfx")); err != nil {
+	nginxSbinDir := filepath.Join(s.Stager.DepDir(), "nginx", "sbin")
+	if err := s.Installer.InstallOnlyVersion("nginx2sfx", nginxSbinDir); err != nil {
 		return err
-	} else if exists {
-		return nil
 	}
-
-	return libbuildpack.CopyFile(filepath.Join(s.Manifest.RootDir(), "bin", "nginx2sfx"), filepath.Join(s.Stager.DepDir(), "bin", "nginx2sfx"))
+	return nil
 }
 
 func (s *Supplier) Setup() error {
