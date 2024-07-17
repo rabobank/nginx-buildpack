@@ -21,7 +21,7 @@ jobs:
           upstream_repository: cloudfoundry/nginx-buildpack
           upstream_branch: master
           target_branch: master
-#          git_pull_args: --allow-unrelated-histories
+          git_pull_args: --allow-unrelated-histories
           git_email: panzer@rabobank.nl
 
       - name: Timestamp
