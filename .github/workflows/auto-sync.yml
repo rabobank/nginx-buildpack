@@ -10,25 +10,19 @@ jobs:
 
     steps:
       - name: Checkout master
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: master
 
-      - name: Pull upstream changes
+      - name: Sync-Fork-action
         id: sync
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.1
+        uses: XueMoMo/Sync-Fork-action@v1.0.6
         with:
-          target_sync_branch: master
-          # REQUIRED 'target_repo_token' exactly like this!
-          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
-          upstream_sync_branch: master
-          upstream_sync_repo: cloudfoundry/nginx-buildpack
-          git_fetch_args: --allow-unrelated-histories
-          git_pull_args: --allow-unrelated-histories
+          upstream_repository: cloudfoundry/nginx-buildpack
+          upstream_branch: master
+          target_branch: master
+#          git_pull_args: --allow-unrelated-histories
           git_email: panzer@rabobank.nl
-
-          # Set test_mode true to run tests instead of the true action!!
-          test_mode: false
 
       - name: Timestamp
         run: date
