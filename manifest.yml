@@ -73,9 +73,9 @@ dependencies:
   source: http://openresty.org/download/openresty-1.25.3.1.tar.gz
   source_sha256: 32ec1a253a5a13250355a075fe65b7d63ec45c560bbe213350f0992a57cd79df
 - name: nginx2sfx
-  version: 1.0.2
-  uri: https://github.com/rabobank/nginx2sfx/releases/download/v1.0.2/nginx2sfx
-  sha256: 69bdb2fb7e0f93061d93063bd010f9f9bf603642f2248363c6e1f000ecfdf347
+  version: 1.0.3
+  uri: https://github.com/rabobank/nginx2sfx/releases/download/v1.0.3/nginx2sfx
+  sha256: c3c8a754552e23bb0ff34e58824547e7c192e1f5f39478cb38b6c8a42727e14c
   cf_stacks:
     - cflinuxfs4
 pre_package: scripts/build.sh
