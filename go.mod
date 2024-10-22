@@ -1,10 +1,10 @@
 module github.com/cloudfoundry/nginx-buildpack
 
-go 1.19
+go 1.22.5
 
 require (
 	github.com/Dynatrace/libbuildpack-dynatrace v1.5.2
-	github.com/cloudfoundry/libbuildpack v0.0.0-20231211162543-86d10e150195
+	github.com/cloudfoundry/libbuildpack v0.0.0-20240716203800-e8e9729b7ef9
 	github.com/golang/mock v1.6.0
 	github.com/miekg/dns v1.1.57
 	github.com/onsi/ginkgo v1.16.5
@@ -16,7 +16,7 @@ require (
 	code.cloudfoundry.org/lager v2.0.0+incompatible // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
-	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
+	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/elazarl/goproxy v0.0.0-20231117061959-7cc037d33fb5 // indirect
 	github.com/elazarl/goproxy/ext v0.0.0-20210110162100-a92cc753f88e // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
