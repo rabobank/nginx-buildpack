@@ -12,7 +12,6 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/cloudfoundry/libbuildpack"
 )
@@ -213,7 +212,7 @@ func (s *Supplier) CheckAccessLogging() error {
 func (s *Supplier) InstallNGINX() error {
 	dep, err := s.findMatchingVersion("nginx", s.Config.Nginx.Version)
 	if err != nil {
-		s.Log.Info(`Available versions: ` + strings.Join(s.availableVersions(), ", "))
+		s.Log.Info("Available versions: %s", strings.Join(s.availableVersions(), ", "))
 		return fmt.Errorf("Could not determine version: %s", err)
 	}
 	if s.Config.Nginx.Version == "" {
@@ -301,8 +300,6 @@ func (s *Supplier) validateNginxConfHasPort() error {
 }
 
 func randomString(strLength int) string {
-	rand.Seed(time.Now().UnixNano())
-
 	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	const numCharsPossible = len(letters)
 	randString := ""
